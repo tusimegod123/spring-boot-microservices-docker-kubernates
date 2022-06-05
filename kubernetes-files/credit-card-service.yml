@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credit-card-service-app
+  labels:
+    app: credit-card-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app : credit-card-service-app
+  template:
+    metadata:
+      labels:
+        app: credit-card-service-app
+    spec:
+      containers:
+      - name: credit-card-service-app
+        image: samueletedocker/credit-card-service:v1.0
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8002
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name:  credit-card-service-svc
+spec:
+  selector:
+    app:  credit-card-service-app
+  ports:
+  - port:  80
+    targetPort:  8002

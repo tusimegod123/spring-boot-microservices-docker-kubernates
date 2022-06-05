@@ -1,0 +1,57 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: product-service-app
+  labels:
+    name: product-service-app
+spec:
+  ports:
+    - nodePort: 30163
+      port: 80
+      targetPort: 8101
+      protocol: TCP
+  selector:
+    app: product-service-app
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service-app
+spec:
+  selector:
+    matchLabels:
+      app: product-service-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: product-service-app
+    spec:
+      containers:
+        - name: product-service-app
+          image: samueletedocker/product-mysql:3.0
+          ports:
+            - containerPort: 8101
+          env:   # Setting Enviornmental Variables
+            - name: DB_HOST   # Setting Database host address from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config  # name of configMap
+                  key: host
+            - name: DB_NAME  # Setting Database name from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: name
+            - name: DB_USERNAME  # Setting Database username from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: db-user # Secret Name
+                  key: username
+            - name: DB_PASSWORD # Setting Database password from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: db-user
+                  key: password

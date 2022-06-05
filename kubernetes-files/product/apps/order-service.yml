@@ -1,0 +1,57 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: order-service-app
+  labels:
+    name: order-service-app
+spec:
+  ports:
+    - nodePort: 30167
+      port: 80
+      targetPort: 8100
+      protocol: TCP
+  selector:
+    app: order-service-app
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service-app
+spec:
+  selector:
+    matchLabels:
+      app: order-service-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: order-service-app
+    spec:
+      containers:
+        - name: order-service-app
+          image: samueletedocker/order-app:2.0
+          ports:
+            - containerPort: 8100
+          env:   # Setting Enviornmental Variables
+            - name: DB_HOST   # Setting Database host address from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config  # name of configMap
+                  key: host
+            - name: DB_NAME  # Setting Database name from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: name
+            - name: DB_USERNAME  # Setting Database username from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: db-user # Secret Name
+                  key: username
+            - name: DB_PASSWORD # Setting Database password from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: db-user
+                  key: password

@@ -1,0 +1,32 @@
+server:
+  port: 8101
+
+spring:
+  application:
+    name: PRODUCT-SERVICE
+  zipkin:
+    base-url: http://127.0.0.1:9411/
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://mysql/product?useSSL=false
+#    username: samuel
+#    password: 1234
+#    hikari:
+#      initialization-fail-timeout: 0
+#  jpa:
+#    database-platform: org.hibernate.dialect.MySQL5Dialect
+#    generate-ddl: true
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: create
+
+ribbon:
+  eureka:
+    enabled: false
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true

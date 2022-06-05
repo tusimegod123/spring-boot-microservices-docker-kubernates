@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping-service-app
+  labels:
+    app: shipping-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app : shipping-service-app
+  template:
+    metadata:
+      labels:
+        app: shipping-service-app
+    spec:
+      containers:
+      - name: shipping-service-app
+        image: samueletedocker/shipping-service:v1.0
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8088
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name:  shipping-service-svc
+spec:
+  selector:
+    app:  shipping-service-app
+  ports:
+  - port:  80
+    targetPort: 8088

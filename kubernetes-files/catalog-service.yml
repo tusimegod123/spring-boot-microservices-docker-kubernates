@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service-app
+  labels:
+    app: catalog-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app : catalog-service-app
+  template:
+    metadata:
+      labels:
+        app: catalog-service-app
+    spec:
+      containers:
+      - name: catalog-service-app
+        image: samueletedocker/catalog-service:v1.0
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8102
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name:  catalog-service-svc
+spec:
+  selector:
+    app:  catalog-service-app
+  ports:
+  - port:  80
+    targetPort:  8102

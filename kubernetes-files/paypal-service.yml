@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paypal-service-app
+  labels:
+    app: paypal-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app : paypal-service-app
+  template:
+    metadata:
+      labels:
+        app: paypal-service-app
+    spec:
+      containers:
+      - name: paypal-service-app
+        image: samueletedocker/pay-pal-service:v1.0
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8005
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name:  paypal-service-svc
+spec:
+  selector:
+    app:  paypal-service-app
+  ports:
+  - port:  80
+    targetPort: 8005

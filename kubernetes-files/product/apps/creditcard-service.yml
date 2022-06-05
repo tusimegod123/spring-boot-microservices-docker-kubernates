@@ -1,0 +1,57 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: creditcard-service-app
+  labels:
+    name: creditcard-service-app
+spec:
+  ports:
+    - nodePort: 30165
+      port: 80
+      targetPort: 8002
+      protocol: TCP
+  selector:
+    app: creditcard-service-app
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: creditcard-service-app
+spec:
+  selector:
+    matchLabels:
+      app: creditcard-service-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: creditcard-service-app
+    spec:
+      containers:
+        - name: creditcard-service-app
+          image: samueletedocker/creditcard-app:2.0
+          ports:
+            - containerPort: 8002
+          env:   # Setting Enviornmental Variables
+            - name: DB_HOST   # Setting Database host address from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config  # name of configMap
+                  key: host
+            - name: DB_NAME  # Setting Database name from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: name
+            - name: DB_USERNAME  # Setting Database username from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: db-user # Secret Name
+                  key: username
+            - name: DB_PASSWORD # Setting Database password from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: db-user
+                  key: password
